@@ -21,3 +21,17 @@ after_success:
   - docker push ofiredi585/multi-server
   - docker push ofiredi585/multi-nginx 
   - docker push ofiredi585/multi-worker
+
+deploy:
+  deploy:
+  provider: elasticbeanstalk
+  region: "us-east-2"
+  app: "react_prod"
+  env: "multiDocker-env"
+  bucket_name: "elasticbeanstalk-us-east-2-369106132999"
+  bucket_path: "react_prod"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"
