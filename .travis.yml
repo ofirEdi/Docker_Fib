@@ -1,0 +1,23 @@
+sudo: required
+
+services:
+ - docker
+
+before_install:
+  - docker build -t ofir/react_test_fib -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true ofir/react_test_fib npm test -- --coverage
+
+after_success:
+  - docker build -t ofir/multi-client ./client
+  - docker build -t ofir/multi-server ./server
+  - docker build -t ofir/multi-nginx ./nginx
+  - docker build -t ofir/multi-worker ./worker
+  #log in to docker cli
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  #Take images and push to dockerhub
+  - docker push ofir/multi-client
+  - docker push ofir/multi-server
+  - docker push ofir/multi-nginx 
+  - docker push ofir/multi-worker
